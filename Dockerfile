@@ -7,7 +7,7 @@ MAINTAINER Wheeler Law <whelderwheels613@gmail.com>
 # OR (assumes that Cntlm can listen on Docker's bridge interface)
 # docker run -e "http_proxy=http://`ip addr show docker0 | sed -n 's/.*inet \([0-9.]\+\)\/.*/\1/p'`:3128" -e "https_proxy=http://`ip addr show docker0 | sed -n 's/.*inet \([0-9.]\+\)\/.*/\1/p'`:3128" --rm -it alpine sh
 
-RUN apk update && apk add build-base curl libevent-dev iptables-dev \
+RUN apk update && apk add build-base curl libevent-dev iptables-dev bash \
   && curl -fsSL https://github.com/darkk/redsocks/archive/release-0.5.tar.gz | tar xz \
   && make -C redsocks-release-0.5/ \
   && cp redsocks-release-0.5/redsocks /usr/local/bin
