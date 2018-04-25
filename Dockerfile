@@ -13,9 +13,9 @@ RUN apk update && apk add build-base curl libevent-dev iptables-dev bash \
   && cp redsocks-release-0.5/redsocks /usr/local/bin
 
 COPY redsocks.tmpl /etc/redsocks.tmpl
-COPY redsocks.sh /usr/local/bin/redsocks.sh
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY fw.sh /usr/local/bin/fw.sh
 
 RUN chmod +x /usr/local/bin/*
 
-ENTRYPOINT ["/usr/local/bin/redsocks.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
