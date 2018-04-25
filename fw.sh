@@ -23,7 +23,7 @@ fw_setup() {
   iptables -t nat -A REDSOCKS -d 240.0.0.0/4 -j RETURN
 
   # We then told iptables to redirect all port 80 connections to the http-relay redsocks port and all other connections to the http-connect redsocks port.
-  iptables -t nat -A REDSOCKS -p tcp --dport 80 -j REDIRECT --to-ports 12345
+  # iptables -t nat -A REDSOCKS -p tcp --dport 80 -j REDIRECT --to-ports 12345
   iptables -t nat -A REDSOCKS -p tcp -j REDIRECT --to-ports 12346
 
   # Finally we tell iptables to use the ‘REDSOCKS’ chain for all outgoing connection in the network interface ‘eth0′.

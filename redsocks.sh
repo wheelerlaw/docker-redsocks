@@ -41,10 +41,10 @@ term_handler() {
 
 # setup handlers
 trap 'kill ${!}; usr_handler' SIGUSR1
-trap 'kill ${!}; term_handler' SIGTERM
+trap 'kill ${!}; term_handler' INT QUIT TERM
 
 echo "Starting redsocks..."
-/usr/sbin/redsocks -c /tmp/redsocks.conf &
+/usr/local/bin/redsocks -c /tmp/redsocks.conf &
 pid="$!"
 
 # wait indefinetely
