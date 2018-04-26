@@ -1,14 +1,14 @@
-FROM ubuntu:16.04
+FROM alpine:3.7
 
 MAINTAINER Wheeler Law <whelderwheels613@gmail.com>
 
-RUN apt-get update && apt-get install -y build-essential curl iptables-dev libevent-dev \
+RUN apk update && apk add build-base curl libevent-dev iptables-dev bash ca-certificates \
   && curl -fsSL https://github.com/darkk/redsocks/archive/release-0.5.tar.gz | tar xz \
   && make -C redsocks-release-0.5/
 
 # Use a multi-stage build to cut down on image size
-FROM ubuntu:16.04
-RUN apt-get update && apt-get install -y iptables libevent-2.0-5 libevent-core-2.0-5
+FROM alpine:3.7
+RUN apk --no-cache add iptables bash ca-certificates libevent
 COPY --from=0 redsocks-release-0.5/redsocks /usr/local/bin
 
 COPY redsocks.tmpl /etc/redsocks.tmpl
