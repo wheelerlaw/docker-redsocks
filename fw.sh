@@ -24,10 +24,10 @@ fw_setup() {
 
   # We then told iptables to redirect all port 80 connections to the http-relay redsocks port and all other connections to the http-connect redsocks port.
   # iptables -t nat -A REDSOCKS -p tcp --dport 80 -j REDIRECT --to-ports 12345
-  iptables -t nat -A REDSOCKS -p tcp -j REDIRECT --to-ports 12346
+  iptables -t nat -A REDSOCKS -p tcp -j REDIRECT --to-ports $port
 
   # Finally we tell iptables to use the ‘REDSOCKS’ chain for all outgoing connection in the network interface ‘eth0′.
-  iptables -t nat -A PREROUTING -i docker0 -p tcp -j REDSOCKS
+  iptables -t nat -A PREROUTING -i $device -p tcp -j REDSOCKS
 }
 
 ##########################
@@ -39,20 +39,32 @@ fw_clear() {
   #iptables -t nat -D PREROUTING 2
 }
 
-case "$1" in
+usage() {
+  echo "Usage: $0 {device} {port} {start|stop}"
+}
+
+if [ $# -ne 3 ]; then
+    usage
+    exit 1
+fi
+
+device="$1"
+port="$2"
+
+case "$3" in
     start)
-        echo -n "Setting REDSOCKS firewall rules..."
+        echo -n "Setting REDSOCKS firewall rules for interface $device... "
         fw_clear
         fw_setup
         echo "done."
         ;;
     stop)
-        echo -n "Cleaning REDSOCKS firewall rules..."
+        echo -n "Cleaning REDSOCKS firewall rules for interface $device... "
         fw_clear
         echo "done."
         ;;
     *)
-        echo "Usage: $0 {start|stop}"
+        usage
         exit 1
         ;;
 esac

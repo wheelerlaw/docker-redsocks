@@ -7,7 +7,21 @@ Wraps [redsocks](https://github.com/darkk/redsocks) in an easy to use Docker ima
 To run:
 
 ```
-docker run --net=host --privileged wheelerlaw/redsocks <proxy-host> <proxy-port>
+docker run --net=host --privileged wheelerlaw/redsocks [-a <listen-addr>] [-p <list-port>] [-t <proxy-url>]
+```
+
+Parameters:
+
+```
+-a listen-addr         Local address to bind to. (127.0.0.1)
+-p listen-port         Local port to bind to. (5053)
+-t proxy-URL           Upstream proxy server to forward requests to (http://localhost:3128).
+```
+
+The proxy can also be specified by environment variable:
+
+```
+docker run --net=host --privileged -e http_proxy wheelerlaw/redsocks [-a <listen-addr>] [-p <list-port>]
 ```
 
 ### Building

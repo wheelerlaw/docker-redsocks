@@ -1,25 +1,73 @@
 #!/bin/bash
 
-if test $# -eq 2
-then
-    proxy_ip=$1
-    proxy_port=$2
-else
-    echo "No proxy URL defined. Using default."
-    proxy_ip=10.26.141.135
-    proxy_port=3128
+# Infer the device name from the IP address
+args=("$@")
+for i in $(seq 0 $#); do
+    case ${args[$i]} in
+        -a)
+        ip=${args[$i+1]}
+        ;;
+
+        -a=*)
+        arg=${args[$i]}
+        ip=${arg#*=}
+        ;;
+
+        -t)
+        proxy=${args[$i+1]}
+        ;;
+
+        -t=*)
+        arg=${args[$i]}
+        proxy=${arg#*=}
+        ;;
+
+        -p)
+        port=${args[$i+1]}
+        ;;
+
+        -p=*)
+        arg=${args[$i]}
+        port=${arg#*=}
+        ;;
+
+    esac
+done
+
+if [ -z "$proxy" ]; then
+    if [ ! -z "$http_proxy" ]; then
+        proxy="$http_proxy"
+    else
+        echo "No proxy specified, defaulting to http://localhost:3128"
+        proxy="http://localhost:3128"
+    fi
 fi
 
-echo "Creating redsocks configuration file using proxy ${proxy_ip}:${proxy_port}..."
-sed -e "s|\${proxy_ip}|${proxy_ip}|" \
+if [ -z "$ip" ]; then
+    echo "No listening address specified, defaulting to 127.0.0.1"
+    ip="127.0.0.1"
+fi
+
+if [ -z "$port" ]; then
+    echo "No listening port specified, defaulting to 12345"
+    port="12345"
+fi
+
+device=$(/sbin/ifconfig | grep -B1 $ip | grep -o "^\w*")
+proxy_host=$(echo $proxy | sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/")
+proxy_port=$(echo $proxy | sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\)\(:\([0-9]\{1,5\}\)\)\?.*/\4/")
+
+echo "Creating redsocks configuration file using proxy ${proxyHost}:${proxyPort}..."
+sed -e "s|\${proxy_ip}|${proxy_host}|" \
     -e "s|\${proxy_port}|${proxy_port}|" \
+    -e "s|\${ip}|${ip}|" \
+    -e "s|\${port}|${port}|" \
     /etc/redsocks.tmpl > /tmp/redsocks.conf
 
 echo "Generated configuration:"
 cat /tmp/redsocks.conf
 
-echo "Activating iptables rules..."
-/fw.sh start
+/fw.sh $device $port start
 
 pid=0
 
@@ -34,7 +82,7 @@ term_handler() {
         echo "Term signal catched. Shutdown redsocks and disable iptables rules..."
         kill -SIGTERM "$pid"
         wait "$pid"
-        /fw.sh stop
+        /fw.sh $device $port stop
     fi
     exit 143; # 128 + 15 -- SIGTERM
 }
