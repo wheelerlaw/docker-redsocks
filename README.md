@@ -10,7 +10,7 @@ To run:
 docker run --net=host --privileged wheelerlaw/redsocks [-a <listen-addr>] [-p <list-port>] [-t <proxy-url>]
 ```
 
-Parameters:
+Options:
 
 ```
 -a listen-addr         Local address to bind to. (127.0.0.1)
