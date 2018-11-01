@@ -12,15 +12,15 @@ fw_setup() {
   #     iptables -t nat -A REDSOCKS -d $item -j RETURN
   # done < /etc/redsocks-whitelist.txt
   iptables -t nat -A REDSOCKS -d 0.0.0.0/8 -j RETURN
-  iptables -t nat -A REDSOCKS -d 10.0.0.0/8 -j RETURN
-  iptables -t nat -A REDSOCKS -d 100.64.0.0/10 -j RETURN
+#  iptables -t nat -A REDSOCKS -d 10.0.0.0/8 -j RETURN
+#  iptables -t nat -A REDSOCKS -d 100.64.0.0/10 -j RETURN
   iptables -t nat -A REDSOCKS -d 127.0.0.0/8 -j RETURN
   iptables -t nat -A REDSOCKS -d 169.254.0.0/16 -j RETURN
-  iptables -t nat -A REDSOCKS -d 172.16.0.0/12 -j RETURN
-  iptables -t nat -A REDSOCKS -d 192.168.0.0/16 -j RETURN
-  iptables -t nat -A REDSOCKS -d 198.18.0.0/15 -j RETURN
+#  iptables -t nat -A REDSOCKS -d 172.16.0.0/12 -j RETURN
+#  iptables -t nat -A REDSOCKS -d 192.168.0.0/16 -j RETURN
+#  iptables -t nat -A REDSOCKS -d 198.18.0.0/15 -j RETURN
   iptables -t nat -A REDSOCKS -d 224.0.0.0/4 -j RETURN
-  iptables -t nat -A REDSOCKS -d 240.0.0.0/4 -j RETURN
+#  iptables -t nat -A REDSOCKS -d 240.0.0.0/4 -j RETURN
 
   # We then told iptables to redirect all port 80 connections to the http-relay redsocks port and all other connections to the http-connect redsocks port.
   # iptables -t nat -A REDSOCKS -p tcp --dport 80 -j REDIRECT --to-ports 12345
